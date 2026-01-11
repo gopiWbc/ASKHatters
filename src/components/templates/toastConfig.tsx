@@ -8,12 +8,12 @@ import Animated, {
   interpolateColor
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
-import { FlexStyle, theme } from '../../theme';
-import AppIcon from '../ui/atoms/AppIcon';
-import AppText from '../ui/atoms/AppText';
+import { FlexStyle, theme } from '@/theme';
+import AppIcon from '@/components/ui/atoms/AppIcon';
+import AppText from '@/components/ui/atoms/AppText';
 import { lightColors } from '@/theme/colors';
 import { useViewport, Viewport } from '@/hooks/useViewPort';
-import ClickableView from '../ui/atoms/ClickableOpacity';
+import ClickableView from '@/components/ui/atoms/ClickableOpacity';
 
 interface TomatoToastProps {
   props: {
@@ -54,7 +54,7 @@ const toastConfig = {
     const animatedStyle = useAnimatedStyle(() => {
       const backgroundColor = interpolateColor(
         progressBarWidth.value,
-        [0, 33, 66, 100], // progress steps
+        [0, 50, 100], // matched to gradientColors length
         gradientColors
       );
 
