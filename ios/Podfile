@@ -59,10 +59,12 @@ target 'ASKHatters' do
       if ['gRPC-Core', 'gRPC-C++', 'abseil'].include?(target.name)
         target.build_configurations.each do |config|
           config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
-          if ['gRPC-Core', 'gRPC-C++'].include?(target.name)
-            config.build_settings['OTHER_CPLUSPLUSFLAGS'] ||= ['$(inherited)']
-            config.build_settings['OTHER_CPLUSPLUSFLAGS'] << '-Wno-error=missing-template-arg-list-after-template-kw'
-          end
+        end
+      end
+      if ['gRPC-Core', 'gRPC-C++'].include?(target.name)
+        target.build_configurations.each do |config|
+          config.build_settings['OTHER_CPLUSPLUSFLAGS'] ||= ['$(inherited)']
+          config.build_settings['OTHER_CPLUSPLUSFLAGS'] << '-Wno-error=missing-template-arg-list-after-template-kw'
         end
       end
     end
@@ -78,6 +80,32 @@ target 'ASKHatters' do
         contents.gsub!(/Traits::template CallSeqFactory\(/, 'Traits::template CallSeqFactory<>(')
         File.open(file_path, 'w') { |file| file.puts contents }
       end
+    end
+
+    # Workaround for RNScreens constexpr issue
+    rn_screens_path = "../node_modules/react-native-screens/ios/RNSScreenStackHeaderConfig.mm"
+    if File.exist?(rn_screens_path)
+      puts "Patching #{rn_screens_path} for constexpr issue..."
+      File.chmod(0644, rn_screens_path)
+      contents = File.read(rn_screens_path)
+      
+      # Reset file content if it was already patched with errors to a clean state if possible, 
+      # or just handle the current double static state aggressively.
+      
+      # Step 1: Fix any previously introduced "static static" or "constexpr static" mess
+      contents.gsub!(/static\s+static/, 'static')
+      contents.gsub!(/constexpr\s+static/, 'static const') 
+      contents.gsub!(/static\s+constexpr/, 'static const')
+      
+      # Step 2: Handle remaining plain constexpr (not already part of static const)
+      # We check if it is NOT preceded by "static " and NOT followed by "static"
+      # But simpler is: Just replace all "constexpr" with "static const" then clean up "static static const"
+      
+      contents.gsub!(/constexpr/, 'static const')
+      contents.gsub!(/static\s+static\s+const/, 'static const')
+      contents.gsub!(/static\s+const\s+static\s+const/, 'static const') # In case of extreme duplication
+      
+      File.open(rn_screens_path, 'w') { |file| file.puts contents }
     end
   end
 end
