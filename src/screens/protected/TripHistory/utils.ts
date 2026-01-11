@@ -1,0 +1,46 @@
+import { Trip } from './types';
+
+export const mockTrips: Trip[] = [
+    {
+        id: '1',
+        orderNumber: 'OS250811',
+        origin: 'Trichy',
+        destination: 'Kerala',
+        date: '28 January 2025',
+        packageName: 'Kerala Package',
+        price: 2445.14,
+        status: 'COMPLETED',
+        rating: 4.0,
+    },
+    {
+        id: '2',
+        orderNumber: 'OS250812',
+        origin: 'Trichy',
+        destination: 'Kerala',
+        date: '28 January 2025',
+        packageName: 'Kerala Package',
+        price: 2445.14,
+        status: 'COMPLETED',
+    },
+    {
+        id: '3',
+        orderNumber: 'OS250813',
+        origin: 'Chennai',
+        destination: 'Madurai',
+        date: '15 January 2025',
+        packageName: 'Madurai Heritage',
+        price: 1850.00,
+        status: 'COMPLETED',
+        rating: 5.0,
+    },
+    {
+        id: '4',
+        orderNumber: 'OS250814',
+        origin: 'Bangalore',
+        destination: 'Mysore',
+        date: '10 January 2025',
+        packageName: 'Mysore Special',
+        price: 3200.00,
+        status: 'CANCELLED',
+    },
+];
