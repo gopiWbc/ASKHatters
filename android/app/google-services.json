@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "386866243522",
+    "project_id": "chat-demo-750cf",
+    "storage_bucket": "chat-demo-750cf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386866243522:android:1b4881bbba0dd510b7d85b",
+        "android_client_info": {
+          "package_name": "com.hatters.ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDevZFsH2eMGhx4j0qiukLiflZnBgN6Cu4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

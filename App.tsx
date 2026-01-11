@@ -5,12 +5,14 @@
  * @format
  */
 
+import React from 'react';
 import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, StatusBar, StyleSheet, useColorScheme, View, Text } from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { useAuth } from './src/hooks/useAuth';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -25,13 +27,30 @@ function App() {
 
 function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
+  const { user, initializing } = useAuth();
+
+  if (initializing) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
+      {user ? (
+        <View style={styles.centered}>
+          <Text style={{ color: styles.container.flex === 1 ? '#000' : '#fff' }}>
+            Welcome, {user.email}!
+          </Text>
+        </View>
+      ) : (
+        <NewAppScreen
+          templateFileName="App.tsx"
+          safeAreaInsets={safeAreaInsets}
+        />
+      )}
     </View>
   );
 }
@@ -39,6 +58,11 @@ function AppContent() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
