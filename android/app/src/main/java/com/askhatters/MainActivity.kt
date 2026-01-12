@@ -1,4 +1,4 @@
-package com.askhatters
+package com.hatters.ai
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
