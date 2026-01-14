@@ -45,9 +45,8 @@ const ChatInput: React.FC<Props> = ({
     const onSpeechError = (e: SpeechErrorEvent) => {
         setIsListening(false);
         console.error('Speech recognition error:', e.error);
-        if (e.error?.message?.includes('perm')) {
-            Alert.alert('Permission Error', 'Microphone or speech recognition permission denied.');
-        }
+        const errorMessage = e.error?.message || 'Unknown speech recognition error';
+        Alert.alert('Speech Recognition Error', errorMessage);
     };
 
     const onSpeechResults = (e: SpeechResultsEvent) => {
@@ -85,8 +84,9 @@ const ChatInput: React.FC<Props> = ({
         try {
             await Voice.start('en-US');
             setIsListening(true);
-        } catch (e) {
+        } catch (e: any) {
             console.error('Failed to start listening:', e);
+            Alert.alert('Failed to Start Listening', e.message || String(e));
         }
     };
 
