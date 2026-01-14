@@ -22,12 +22,20 @@ const ChatInput: React.FC<Props> = ({
     const { colors } = useAppTheme();
     const [text, setText] = useState('');
     const [isListening, setIsListening] = useState(false);
+    const ignoreNextSpeechResults = React.useRef(false);
+    const isListeningRef = React.useRef(false);
+
+    // Keep ref in sync for event listeners
+    useEffect(() => {
+        isListeningRef.current = isListening;
+    }, [isListening]);
 
     useEffect(() => {
         Voice.onSpeechStart = onSpeechStart;
         Voice.onSpeechEnd = onSpeechEnd;
         Voice.onSpeechError = onSpeechError;
         Voice.onSpeechResults = onSpeechResults;
+        Voice.onSpeechPartialResults = onSpeechResults; // Also handle partial results
 
         return () => {
             Voice.destroy().then(Voice.removeAllListeners);
@@ -50,6 +58,7 @@ const ChatInput: React.FC<Props> = ({
     };
 
     const onSpeechResults = (e: SpeechResultsEvent) => {
+        if (ignoreNextSpeechResults.current) return;
         if (e.value && e.value.length > 0) {
             setText(e.value[0]);
         }
@@ -82,6 +91,7 @@ const ChatInput: React.FC<Props> = ({
         if (!hasPermission) return;
 
         try {
+            ignoreNextSpeechResults.current = false;
             await Voice.start('en-US');
             setIsListening(true);
         } catch (e: any) {
@@ -90,9 +100,13 @@ const ChatInput: React.FC<Props> = ({
         }
     };
 
-    const stopListening = async () => {
+    const stopListening = async (cancel = false) => {
         try {
-            await Voice.stop();
+            if (cancel) {
+                await Voice.cancel();
+            } else {
+                await Voice.stop();
+            }
             setIsListening(false);
         } catch (e) {
             console.error('Failed to stop listening:', e);
@@ -100,7 +114,7 @@ const ChatInput: React.FC<Props> = ({
     };
 
     const toggleListening = () => {
-        if (isListening) {
+        if (isListeningRef.current) {
             stopListening();
         } else {
             startListening();
@@ -108,10 +122,17 @@ const ChatInput: React.FC<Props> = ({
     };
 
     const handleSend = () => {
-        if (text.trim() && !isLoading && !disabled) {
-            onSend(text.trim());
+        const trimmedText = text.trim();
+        if (trimmedText && !isLoading && !disabled) {
+            // Immediate UI updates
+            ignoreNextSpeechResults.current = true;
             setText('');
-            if (isListening) stopListening();
+
+            // Call onSend with the saved text
+            onSend(trimmedText);
+
+            // Kill voice recognition immediately if active
+            if (isListeningRef.current) stopListening(true);
         }
     };
 
