@@ -1,5 +1,5 @@
 #!/bin/sh
-export PATH=/Users/rmpal/.nvm/versions/node/v18.20.3/bin:$PATH:/usr/local/bin
+export PATH=/Users/rmpal/.nvm/versions/node/v22.21.1/bin:$PATH:/usr/local/bin
 
 
 #
